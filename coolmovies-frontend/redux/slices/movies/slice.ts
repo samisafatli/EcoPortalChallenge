@@ -1,21 +1,21 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-interface ExampleState {
-  value: number;
+interface MovieState {
+  allMovies: any;
   sideEffectCount: number;
   fetchData?: unknown[];
 }
 
-const initialState: ExampleState = {
-  value: 0,
+const initialState: MovieState = {
   sideEffectCount: 0,
+  allMovies: undefined
 };
 
 export const slice = createSlice({
   initialState,
-  name: 'example',
+  name: 'movieReducer',
   reducers: {
-    fetch: () => {},
+    fetch: () => { },
     clearData: (state) => {
       state.fetchData = undefined;
     },
@@ -24,12 +24,6 @@ export const slice = createSlice({
     },
     loadError: (state) => {
       state.fetchData = ['Error Fetching :('];
-    },
-    increment: (state) => {
-      state.value += 1;
-    },
-    epicSideEffect: (state) => {
-      state.sideEffectCount += 1;
     },
   },
 });
