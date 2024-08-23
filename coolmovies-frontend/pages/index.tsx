@@ -1,20 +1,28 @@
 import { css } from '@emotion/react';
 import {
-  Button,
+  Card,
+  CardMedia,
+  Grid,
   Paper,
-  TextField,
-  Tooltip,
   Typography,
-  Zoom,
 } from '@mui/material';
 import type { NextPage } from 'next';
-import { exampleActions, useAppDispatch, useAppSelector } from '../redux';
+import { movieActions, useAppDispatch, useAppSelector } from '../redux';
+import { useEffect } from 'react';
 
-const primary = '#1976d2';
+const primary = '#af2894';
 
 const Home: NextPage = () => {
   const dispatch = useAppDispatch();
-  const exampleState = useAppSelector((state) => state.example);
+  const movieState = useAppSelector((state) => state.movies);
+  useEffect(() => {
+    if (!movieState.fetchData) {
+      dispatch(movieActions.fetch())
+    }
+  }, [dispatch, movieState.fetchData]);
+
+  console.log('movieState:', movieState);
+
   return (
     <div css={styles.root}>
       <Paper elevation={3} css={styles.navBar}>
@@ -22,50 +30,29 @@ const Home: NextPage = () => {
       </Paper>
 
       <div css={styles.body}>
-        <Typography variant={'h1'} css={styles.heading}>
-          {'EcoPortal Coolmovies Test'}
-        </Typography>
-        <Typography variant={'subtitle1'} css={styles.subtitle}>
-          {`Thank you for taking the time to take our test. We really appreciate it. 
-        All the information on what is required can be found in the README at the root of this repo. 
-        Please don't spend ages on this and just get through as much of it as you can. 
-        Good luck! 😄`}
-        </Typography>
-
-        <div css={styles.mainControls}>
-          <Tooltip
-            title={`Side Effect Count from Epic (Gets run on odd values): ${exampleState.sideEffectCount}`}
-            arrow
-          >
-            <Button
-              variant={'contained'}
-              onClick={() => dispatch(exampleActions.increment())}
-            >
-              {`Redux Increment: ${exampleState.value}`}
-            </Button>
-          </Tooltip>
-          <Button
-            variant={'outlined'}
-            onClick={() =>
-              dispatch(
-                exampleState.fetchData
-                  ? exampleActions.clearData()
-                  : exampleActions.fetch()
-              )
-            }
-          >
-            {exampleState.fetchData ? 'Hide some data' : 'Fetch some data'}
-          </Button>
-        </div>
-
-        <Zoom in={Boolean(exampleState.fetchData)} unmountOnExit mountOnEnter>
-          <TextField
-            css={styles.dataInput}
-            multiline
-            label={'Some Data'}
-            defaultValue={JSON.stringify(exampleState.fetchData)}
-          />
-        </Zoom>
+        <Grid container spacing={2}>
+          {movieState?.fetchData?.map((movie: any) => (
+            <Grid item key={movie.id} xs={12} sm={6} md={4}>
+              <Card>
+                <CardMedia
+                  component="img"
+                  image={movie.imgUrl}
+                  alt={movie.title}
+                  style={{ maxHeight: '300px', width: '100%', objectFit: 'cover' }}
+                />
+                <Typography variant="h6" component="div">
+                  {movie.title}
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  {`Created by: ${movie.userByUserCreatorId.name}`}
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  {`Release Date: ${new Date(movie.releaseDate).toDateString()}`}
+                </Typography>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
       </div>
     </div>
   );
