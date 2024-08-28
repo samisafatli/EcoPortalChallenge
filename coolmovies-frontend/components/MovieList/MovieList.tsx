@@ -1,12 +1,14 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux';
-import { Grid, Card, CardMedia, Typography, CardContent } from '@mui/material';
+import { Grid, Card, CardMedia, Typography, CardContent, Button } from '@mui/material';
 import { movieActions } from '../../redux/slices/movies';
 import MovieReviewsList from '../MovieReviewsList/MovieReviewsList';
 import AddReviewForm from '../AddReviewForm/AddReviewForm';
 
 const MovieList: React.FC = () => {
     const { fetchData, moviesLoading, moviesError } = useAppSelector((state) => state.movies);
+    const [editMode, setEditMode] = useState<{ [movieId: string]: boolean }>({});
+    const [reviewToEdit, setReviewToEdit] = useState<{ [movieId: string]: any }>({});
 
     const dispatch = useAppDispatch();
 
@@ -15,6 +17,19 @@ const MovieList: React.FC = () => {
             dispatch(movieActions.fetchMoviesStart());
         }
     }, [dispatch, fetchData]);
+
+    const handleEditReview = (movieId: string, review: any) => {
+        setEditMode((prev) => ({ ...prev, [movieId]: true }));
+        setReviewToEdit((prev) => ({
+            ...prev,
+            [movieId]: {
+                reviewId: review.id,
+                title: review.title,
+                body: review.body,
+                rating: review.rating
+            }
+        }));
+    };
 
     if (moviesLoading) return <Typography>Loading movies...</Typography>;
     if (moviesError) return <Typography>Error: {moviesError}</Typography>;
@@ -35,8 +50,19 @@ const MovieList: React.FC = () => {
                             <Typography variant="body2">{`Created by: ${movie.userByUserCreatorId.name}`}</Typography>
                             <Typography variant="body2">{`Release Date: ${new Date(movie.releaseDate).toDateString()}`}</Typography>
                         </CardContent>
-                        <MovieReviewsList movieId={movie.id} />
-                        <AddReviewForm movieId={movie.id} />
+
+                        <MovieReviewsList
+                            key={`${movie.id}-${editMode[movie.id]}`}
+                            onEdit={(review) => handleEditReview(movie.id, review)}
+                            movieId={movie.id}
+                            editMode={!!editMode[movie.id]}
+                        />
+
+                        <AddReviewForm
+                            reviewToEdit={reviewToEdit[movie.id] || null}
+                            movieId={movie.id}
+                            editMode={!!editMode[movie.id]}
+                        />
                     </Card>
                 </Grid>
             ))}

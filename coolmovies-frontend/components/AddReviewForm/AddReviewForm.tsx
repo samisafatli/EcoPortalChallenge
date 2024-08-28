@@ -2,32 +2,56 @@ import React, { useEffect, useState } from 'react';
 import { Typography, TextField, Rating, Button } from '@mui/material';
 import { movieActions, useAppDispatch, } from '../../redux';
 
+
+
 interface AddReviewFormProps {
     movieId: string;
+    reviewToEdit?: { reviewId: string, title: string; body: string; rating: number } | null;
+    editMode: boolean;
 }
 
-const AddReviewForm: React.FC<AddReviewFormProps> = ({ movieId }) => {
+const AddReviewForm: React.FC<AddReviewFormProps> = ({ movieId, reviewToEdit, editMode }) => {
     const dispatch = useAppDispatch();
-    const [title, setTitle] = useState('');
-    const [body, setBody] = useState('');
+    const { editReviewStart, addReviewStart } = movieActions
+    const [title, setTitle] = useState(reviewToEdit ? reviewToEdit.title : '');
+    const [body, setBody] = useState(reviewToEdit ? reviewToEdit.body : '');
+    const [rating, setRating] = useState<number>(reviewToEdit ? reviewToEdit.rating : 0);
 
-    const [rating, setRating] = useState<number>(0)
+    const clearState = () => {
+        setTitle('');
+        setBody('');
+        setRating(0);
+    }
+
+    useEffect(() => {
+        if (editMode && reviewToEdit) {
+            setTitle(reviewToEdit.title);
+            setBody(reviewToEdit.body);
+            setRating(reviewToEdit.rating);
+        }
+    }, [editMode, reviewToEdit]);
 
     const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault()
+        e.preventDefault();
         if (title && body && rating !== 0) {
-            dispatch(movieActions.addReviewStart({ movieId, title, body, rating }))
-            setTitle('')
-            setBody('')
-            setRating(0)
-            dispatch(movieActions.fetchReviewsStart({ movieId }))
+            if (editMode && reviewToEdit) {
+                dispatch(editReviewStart({
+                    movieId,
+                    title,
+                    body,
+                    rating,
+                    reviewId: reviewToEdit.reviewId
+                }));
+            } else {
+                dispatch(addReviewStart({ movieId, title, body, rating }));
+            }
+            clearState()
         }
     }
 
     return (
         <form onSubmit={handleSubmit}>
-            <Typography variant="h6">Add you review!</Typography>
-
+            <Typography variant="h6">{editMode ? 'Edit your review!' : 'Add your review!'}</Typography>
             <TextField
                 label="Title"
                 fullWidth
@@ -35,7 +59,6 @@ const AddReviewForm: React.FC<AddReviewFormProps> = ({ movieId }) => {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
             />
-
             <TextField
                 label="Body"
                 fullWidth
@@ -45,15 +68,13 @@ const AddReviewForm: React.FC<AddReviewFormProps> = ({ movieId }) => {
                 value={body}
                 onChange={(e) => setBody(e.target.value)}
             />
-
             <Rating
                 value={rating}
                 onChange={(event, newValue) => setRating(newValue || 0)}
                 name="rating"
             />
-
             <Button type="submit" variant="contained" color="primary">
-                Submit Review
+                {editMode ? 'Update Review' : 'Submit Review'}
             </Button>
 
         </form>

@@ -2,13 +2,15 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface MovieState {
   fetchData?: any[];
-  reviewsByMovieId: { [key: string]: any[] };
+  reviewsByMovieId: { [movieId: string]: any[] };
   moviesLoading: boolean;
   reviewsLoading: boolean;
   addReviewLoading: boolean;
+  editReviewLoading: boolean;
   moviesError: string | null;
   reviewsError: string | null;
   addReviewError: string | null;
+  editReviewError: string | null;
 }
 
 const initialState: MovieState = {
@@ -17,9 +19,11 @@ const initialState: MovieState = {
   moviesLoading: false,
   reviewsLoading: false,
   addReviewLoading: false,
+  editReviewLoading: false,
   moviesError: null,
   reviewsError: null,
-  addReviewError: null
+  addReviewError: null,
+  editReviewError: null
 };
 
 export const slice = createSlice({
@@ -48,7 +52,6 @@ export const slice = createSlice({
     fetchReviewsSuccess: (state, action: PayloadAction<{
       movieId: any; data: any[]
     }>) => {
-      console.log('Reviews Recebidas:', action.payload.data);
       state.reviewsByMovieId[action.payload.movieId] = action.payload.data;
       state.reviewsLoading = false;
     },
@@ -77,6 +80,25 @@ export const slice = createSlice({
       state.addReviewLoading = false
       state.addReviewError = action.payload.error
     },
+    // Edit Review
+    editReviewStart: (state, action: PayloadAction<{ movieId: string; title: string; body: string; rating: number; reviewId: string }>) => {
+      state.editReviewLoading = true;
+      state.editReviewError = null;
+    },
+    editReviewSuccess: (state, action: PayloadAction<{ movieId: string; updatedReview: any }>) => {
+      const { movieId, updatedReview } = action.payload;
+      const movieReviews = state.reviewsByMovieId[movieId] || [];
+      const reviewIndex = movieReviews.findIndex((review) => review.id === updatedReview.id);
+      if (reviewIndex !== -1) {
+        movieReviews[reviewIndex] = updatedReview;
+      }
+      state.reviewsByMovieId[movieId] = [...movieReviews];
+      state.editReviewLoading = false;
+    },
+    editReviewFailure: (state, action: PayloadAction<{ error: string }>) => {
+      state.editReviewLoading = false;
+      state.editReviewError = action.payload.error;
+    }
   },
 });
 

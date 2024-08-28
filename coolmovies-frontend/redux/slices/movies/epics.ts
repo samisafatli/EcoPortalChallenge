@@ -1,5 +1,5 @@
 import { Epic, StateObservable } from 'redux-observable';
-import { Observable, of } from 'rxjs';
+import { Observable, of, from } from 'rxjs';
 import { filter, switchMap, catchError } from 'rxjs/operators';
 import { RootState } from '../../store';
 import { EpicDependencies } from '../../types';
@@ -8,6 +8,7 @@ import { GET_MOVIES } from '../../../graphql/getMovies';
 import { GET_MOVIE_REVIEWS } from '../../../graphql/getMovieReviews';
 import { movieActions } from './slice';
 import { ADD_REVIEW_MUTATION } from '../../../graphql/addReview';
+import { EDIT_REVIEW_MUTATION } from '../../../graphql/editReview';
 
 export const fetchMoviesEpic: Epic = (
   action$: Observable<ReturnType<typeof movieActions.fetchMoviesStart>>,
@@ -73,3 +74,46 @@ export const addReviewEpic: Epic = (action$, state$, { client }: EpicDependencie
     })
   );
 
+export const editReviewEpic: Epic = (
+  action$,
+  state$,
+  { client }: EpicDependencies
+) =>
+  action$.pipe(
+    filter(movieActions.editReviewStart.match),
+    switchMap((action) => {
+      const { movieId, title, body, rating, reviewId } = action.payload;
+      return from(client.mutate({
+        mutation: EDIT_REVIEW_MUTATION,
+        variables: { id: reviewId, title, body, rating }
+      })).pipe(
+        switchMap((result) => {
+          const updatedReview = result?.data.updateMovieReviewById?.movieReview;
+          if (!updatedReview) {
+            return of(movieActions.editReviewFailure({ error: 'Updated review not found' }));
+          }
+          const editSuccessAction = movieActions.editReviewSuccess({ movieId, updatedReview });
+
+          return from(client.query({
+            query: GET_MOVIE_REVIEWS,
+            variables: { movieId },
+          })).pipe(
+            switchMap((result) => {
+              const fetchReviewsSuccessAction = movieActions.fetchReviewsSuccess({
+                movieId,
+                data: result.data.allMovieReviews.nodes,
+              });
+
+              return of(editSuccessAction, fetchReviewsSuccessAction);
+            }),
+            catchError((error) => {
+              return of(movieActions.editReviewFailure({ error: error.message }));
+            })
+          );
+        }),
+        catchError((error) => {
+          return of(movieActions.editReviewFailure({ error: error.message }));
+        })
+      );
+    })
+  );
