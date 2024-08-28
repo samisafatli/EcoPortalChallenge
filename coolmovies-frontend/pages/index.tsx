@@ -3,7 +3,7 @@ import { Paper, Typography } from '@mui/material';
 import type { NextPage } from 'next';
 import MovieList from '../components/MovieList/MovieList';
 
-const primary = '#af2894';
+const primary = '#8a2275';
 
 const Home: NextPage = () => {
   return (
