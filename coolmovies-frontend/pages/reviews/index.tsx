@@ -1,8 +1,8 @@
 import { Paper, Typography } from '@mui/material'
 import { NextPage } from 'next'
 import React from 'react'
-import MovieList from '../components/MovieList/MovieList'
-import styles from './index.styles'
+import MovieList from './components/MovieList/MovieList'
+import styles from '../index.styles'
 
 const ReviewsPage: NextPage = () => {
     return (

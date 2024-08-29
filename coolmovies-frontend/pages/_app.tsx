@@ -3,12 +3,12 @@ import type { AppProps } from 'next/app';
 import React, { FC, useState } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import Head from 'next/head';
-import { createStore } from '../redux';
 import { EnhancedStore } from '@reduxjs/toolkit';
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import theme from '../theme';
+import { createStore } from '../features/movies/redux';
 
 const App: FC<AppProps> = ({ Component, pageProps }) => {
   const [store, setStore] = useState<EnhancedStore | null>(null);

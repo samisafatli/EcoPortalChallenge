@@ -6,7 +6,7 @@ const HomePage: NextPage = () => {
   const router = useRouter();
 
   useEffect(() => {
-    router.push('/reviews')
+    router.push('../pages/reviews/index')
   }, [router])
 
 };

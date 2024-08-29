@@ -3,12 +3,12 @@ import { Observable, of, from } from 'rxjs';
 import { filter, switchMap, catchError } from 'rxjs/operators';
 import { RootState } from '../../store';
 import { EpicDependencies } from '../../types';
-
-import { GET_MOVIES } from '../../../graphql/getMovies';
-import { GET_MOVIE_REVIEWS } from '../../../graphql/getMovieReviews';
 import { movieActions } from './slice';
 import { ADD_REVIEW_MUTATION } from '../../../graphql/addReview';
 import { EDIT_REVIEW_MUTATION } from '../../../graphql/editReview';
+import { GET_MOVIE_REVIEWS } from '../../../graphql/getMovieReviews';
+import { GET_MOVIES } from '../../../graphql/getMovies';
+
 
 export const fetchMoviesEpic: Epic = (
   action$: Observable<ReturnType<typeof movieActions.fetchMoviesStart>>,

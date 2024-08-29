@@ -1,4 +1,3 @@
-// src/pages/Home.styles.ts
 import { css } from '@emotion/react';
 
 const styles = {

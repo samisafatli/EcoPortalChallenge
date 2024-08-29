@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../redux';
 import { Grid, Card, CardMedia, Typography, CardContent } from '@mui/material';
-import { movieActions } from '../../redux/slices/movies';
 import MovieReviewsList from '../MovieReviewsList/MovieReviewsList';
 import AddReviewForm from '../AddReviewForm/AddReviewForm';
+import { movieActions, useAppDispatch, useAppSelector } from '../../../../features/movies/redux';
 
 const MovieList: React.FC = () => {
     const { fetchData, moviesLoading, moviesError, editMode } = useAppSelector((state) => state.movies);

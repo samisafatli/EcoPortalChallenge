@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import { CircularProgress, Typography, List, ListItem, ListItemText, Button, Divider, IconButton } from '@mui/material';
-import { movieActions, useAppDispatch, useAppSelector } from '../../redux';
+import { CircularProgress, Typography, List, ListItem, ListItemText, Divider, IconButton } from '@mui/material';
+import { movieActions, useAppDispatch, useAppSelector } from '../../../../features/movies/redux';
 
 interface MovieReviewsListProps {
     movieId: string;

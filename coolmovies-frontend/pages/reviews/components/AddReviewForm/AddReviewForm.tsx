@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Typography, TextField, Rating, Button } from '@mui/material';
-import { movieActions, useAppDispatch, } from '../../redux';
 import styles from './AddReviewForm.styles'
+import { movieActions, useAppDispatch } from '../../../../features/movies/redux';
 
 interface AddReviewFormProps {
     movieId: string;
