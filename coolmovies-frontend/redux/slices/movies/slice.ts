@@ -11,6 +11,7 @@ interface MovieState {
   reviewsError: string | null;
   addReviewError: string | null;
   editReviewError: string | null;
+  editMode: { [movieId: string]: boolean }
 }
 
 const initialState: MovieState = {
@@ -23,7 +24,8 @@ const initialState: MovieState = {
   moviesError: null,
   reviewsError: null,
   addReviewError: null,
-  editReviewError: null
+  editReviewError: null,
+  editMode: {},
 };
 
 export const slice = createSlice({
@@ -94,10 +96,14 @@ export const slice = createSlice({
       }
       state.reviewsByMovieId[movieId] = [...movieReviews];
       state.editReviewLoading = false;
+      state.editMode[movieId] = false;
     },
     editReviewFailure: (state, action: PayloadAction<{ error: string }>) => {
       state.editReviewLoading = false;
       state.editReviewError = action.payload.error;
+    },
+    setEditMode: (state, action: PayloadAction<{ movieId: string; editMode: boolean }>) => {
+      state.editMode[action.payload.movieId] = action.payload.editMode
     }
   },
 });

@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux';
-import { Grid, Card, CardMedia, Typography, CardContent, Button } from '@mui/material';
+import { Grid, Card, CardMedia, Typography, CardContent } from '@mui/material';
 import { movieActions } from '../../redux/slices/movies';
 import MovieReviewsList from '../MovieReviewsList/MovieReviewsList';
 import AddReviewForm from '../AddReviewForm/AddReviewForm';
 
 const MovieList: React.FC = () => {
-    const { fetchData, moviesLoading, moviesError } = useAppSelector((state) => state.movies);
-    const [editMode, setEditMode] = useState<{ [movieId: string]: boolean }>({});
+    const { fetchData, moviesLoading, moviesError, editMode } = useAppSelector((state) => state.movies);
     const [reviewToEdit, setReviewToEdit] = useState<{ [movieId: string]: any }>({});
 
     const dispatch = useAppDispatch();
@@ -19,16 +18,16 @@ const MovieList: React.FC = () => {
     }, [dispatch, fetchData]);
 
     const handleEditReview = (movieId: string, review: any) => {
-        setEditMode((prev) => ({ ...prev, [movieId]: true }));
         setReviewToEdit((prev) => ({
             ...prev,
             [movieId]: {
                 reviewId: review.id,
                 title: review.title,
                 body: review.body,
-                rating: review.rating
-            }
+                rating: review.rating,
+            },
         }));
+        dispatch(movieActions.setEditMode({ movieId, editMode: true }));
     };
 
     if (moviesLoading) return <Typography>Loading movies...</Typography>;
