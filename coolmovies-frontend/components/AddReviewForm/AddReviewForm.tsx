@@ -10,7 +10,6 @@ interface AddReviewFormProps {
 }
 
 const AddReviewForm: React.FC<AddReviewFormProps> = ({ movieId, reviewToEdit, editMode }) => {
-    console.log("🚀 ~ editMode:", editMode)
     const dispatch = useAppDispatch();
     const { editReviewStart, addReviewStart } = movieActions
     const [title, setTitle] = useState(reviewToEdit ? reviewToEdit.title : '');

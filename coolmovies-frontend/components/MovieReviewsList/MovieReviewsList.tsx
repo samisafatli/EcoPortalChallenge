@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { CircularProgress, Typography, List, ListItem, ListItemText, Button, Divider } from '@mui/material';
+import { CircularProgress, Typography, List, ListItem, ListItemText, Button, Divider, IconButton } from '@mui/material';
 import { movieActions, useAppDispatch, useAppSelector } from '../../redux';
 
 interface MovieReviewsListProps {
@@ -32,7 +32,9 @@ const MovieReviewsList: React.FC<MovieReviewsListProps> = ({ movieId, onEdit, ed
                         primary={`${review.title} - Rating: ${review.rating}`}
                         secondary={`${review.body}`}
                     />
-                    <Button onClick={() => onEdit(review)}>Edit</Button>
+                    <IconButton onClick={() => onEdit(review)}>
+                        <img src="/edit.svg" alt="Edit" style={{ width: "24px", height: "24px" }} />
+                    </IconButton>
                 </ListItem>
             ))}
             <Divider />
