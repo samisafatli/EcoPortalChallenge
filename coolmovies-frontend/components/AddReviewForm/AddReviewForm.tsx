@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Typography, TextField, Rating, Button } from '@mui/material';
 import { movieActions, useAppDispatch, } from '../../redux';
-
-
+import styles from './AddReviewForm.styles'
 
 interface AddReviewFormProps {
     movieId: string;
@@ -11,11 +10,14 @@ interface AddReviewFormProps {
 }
 
 const AddReviewForm: React.FC<AddReviewFormProps> = ({ movieId, reviewToEdit, editMode }) => {
+    console.log("🚀 ~ editMode:", editMode)
     const dispatch = useAppDispatch();
     const { editReviewStart, addReviewStart } = movieActions
     const [title, setTitle] = useState(reviewToEdit ? reviewToEdit.title : '');
     const [body, setBody] = useState(reviewToEdit ? reviewToEdit.body : '');
     const [rating, setRating] = useState<number>(reviewToEdit ? reviewToEdit.rating : 0);
+
+
 
     const clearState = () => {
         setTitle('');
@@ -50,7 +52,7 @@ const AddReviewForm: React.FC<AddReviewFormProps> = ({ movieId, reviewToEdit, ed
     }
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form css={styles.form} onSubmit={handleSubmit}>
             <Typography variant="h6">{editMode ? 'Edit your review!' : 'Add your review!'}</Typography>
             <TextField
                 label="Title"
@@ -73,10 +75,9 @@ const AddReviewForm: React.FC<AddReviewFormProps> = ({ movieId, reviewToEdit, ed
                 onChange={(event, newValue) => setRating(newValue || 0)}
                 name="rating"
             />
-            <Button type="submit" variant="contained" color="primary">
+            <Button css={styles.button} type="submit" variant="contained" color="primary">
                 {editMode ? 'Update Review' : 'Submit Review'}
             </Button>
-
         </form>
     );
 };

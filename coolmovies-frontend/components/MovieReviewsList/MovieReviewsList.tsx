@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { CircularProgress, Typography, List, ListItem, ListItemText, Button } from '@mui/material';
+import { CircularProgress, Typography, List, ListItem, ListItemText, Button, Divider } from '@mui/material';
 import { movieActions, useAppDispatch, useAppSelector } from '../../redux';
 
 interface MovieReviewsListProps {
@@ -29,12 +29,13 @@ const MovieReviewsList: React.FC<MovieReviewsListProps> = ({ movieId, onEdit, ed
             {reviews.map((review: any) => (
                 <ListItem key={review.id} alignItems="flex-start">
                     <ListItemText
-                        primary={`${review.title} (Rating: ${review.rating})`}
+                        primary={`${review.title} - Rating: ${review.rating}`}
                         secondary={`${review.body}`}
                     />
                     <Button onClick={() => onEdit(review)}>Edit</Button>
                 </ListItem>
             ))}
+            <Divider />
         </List>
     );
 };
